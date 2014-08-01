@@ -1,0 +1,22 @@
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_solo
+
+platforms:
+  - name: ubuntu-14.04
+  - name: ubuntu-12.04
+  - name: centos-6.4
+
+suites:
+  - name: default
+    run_list: 'recipe[influxdb]'
+    attributes:
+    driver_config:
+        network:
+          - ['forwarded_port', {guest: 8083, host: 8083}]
+          - ['forwarded_port', {guest: 8086, host: 8086}]
+          - ['forwarded_port', {guest: 8090, host: 8090}]
+          - ['forwarded_port', {guest: 8099, host: 8099}]
