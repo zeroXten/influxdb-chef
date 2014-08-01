@@ -72,4 +72,5 @@ end
 service 'influxdb' do
   supports :status => true, :restart => true, :reload => true
   action [ :enable, :start ]
+  subscribes :restart, "template[#{node.influxdb.config_file}]"
 end

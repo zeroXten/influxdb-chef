@@ -5,7 +5,7 @@ maintainer_email 'fraser.scott@gmail.com'
 license          'MIT'
 description      'Installs/Configures influxdb'
 long_description 'Installs/Configures influxdb'
-version          '0.1.1'
+version          '0.1.2'
 
 depends 'limits', '~> 0.2'
 
