@@ -48,7 +48,7 @@ end
 # basic config file
 #chef_gem 'toml'
 #require 'toml'
-cookbook_file node.influxdb.config_file do
+template node.influxdb.config_file do
   user node.influxdb.user
   group node.influxdb.group
   mode 0644
