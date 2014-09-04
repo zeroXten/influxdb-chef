@@ -53,6 +53,9 @@ template node.influxdb.config_file do
   group node.influxdb.group
   mode 0644
   cookbook node.influxdb.config_cookbook
+  variables({
+    :config => node.influxdb.config
+  })
   #content TOML::Generator.new(node.influxdb.config.to_hash).body
 end
 
