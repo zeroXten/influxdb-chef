@@ -5,7 +5,7 @@
 # that can be resolved here.
 # hostname = ""
 
-bind-address = "0.0.0.0"
+bind-address = "<%= @config['bind-address'] %>"
 
 # Once every 24 hours InfluxDB will report anonymous data to m.influxdb.com
 # The data includes raft name (random 8 bytes), os, arch and version
@@ -13,70 +13,72 @@ bind-address = "0.0.0.0"
 # to track the number of instances running and the versions which
 # is very helpful for us.
 # Change this option to true to disable reporting.
-reporting-disabled = false
+reporting-disabled = <%= @config['reporting-disabled'] %>
 
 [logging]
 # logging level can be one of "debug", "info", "warn" or "error"
-level  = "info"
-file   = "/opt/influxdb/shared/log.txt"         # stdout to log to standard out
+level  = "<%= @config['logging']['level'] %>"
+file   = "<%= @config['logging']['file'] %>"         # stdout to log to standard out
 
 # Configure the admin server
 [admin]
-port   = 8083              # binding is disabled if the port isn't set
-assets = "/opt/influxdb/current/admin"
+port   = <%= @config['admin']['port'] %>              # binding is disabled if the port isn't set
+assets = "<%= @config['admin']['assets'] %>"
 
 # Configure the http api
 [api]
-port     = 8086    # binding is disabled if the port isn't set
+port     = <%= @config['api']['port'] %>    # binding is disabled if the port isn't set
 # ssl-port = 8084    # Ssl support is enabled if you set a port and cert
 # ssl-cert = /path/to/cert.pem
 
 # connections will timeout after this amount of time. Ensures that clients that misbehave
 # and keep alive connections they don't use won't end up connection a million times.
 # However, if a request is taking longer than this to complete, could be a problem.
-read-timeout = "5s"
+read-timeout = "<%= @config['api']['read-timeout'] %>"
 
 [input_plugins]
 
   # Configure the graphite api
   [input_plugins.graphite]
-  enabled = false
+  enabled = <%= @config['input_plugins']['graphite']['enabled'] %>
   # port = 2003
   # database = ""  # store graphite data in this database
   # udp_enabled = true # enable udp interface on the same port as the tcp interface
 
   # Configure the udp api
   [input_plugins.udp]
-  enabled = false
+  enabled = <%= @config['input_plugins']['udp']['enabled'] %>
   # port = 4444
   # database = ""
 
   # Configure multiple udp apis each can write to separate db.  Just
   # repeat the following section to enable multiple udp apis on
   # different ports.
+  <% @config['input_plugins']['udp_servers'].each do |srv| -%>
   [[input_plugins.udp_servers]] # array of tables
-  enabled = false
+  enabled = <%= srv.enabled %>
   # port = 5551
   # database = "db1"
+  <% end -%>
 
 # Raft configuration
 [raft]
 # The raft port should be open between all servers in a cluster.
 # However, this port shouldn't be accessible from the internet.
 
-port = 8090
+port = <%= @config['raft']['enabled'] %>
 
 # Where the raft logs are stored. The user running InfluxDB will need read/write access.
-dir  = "/opt/influxdb/shared/data/raft"
+dir  = "<%= @config['raft']['dir'] %>"
 
-# election-timeout = "1s"
+election-timeout = "<%= @config['raft']['election-timeout'] %>"
 
 [storage]
-dir = "/opt/influxdb/shared/data/db"
+dir = "<%= @config['storage']['dir'] %>"
 # How many requests to potentially buffer in memory. If the buffer gets filled then writes
 # will still be logged and once the local storage has caught up (or compacted) the writes
 # will be replayed from the WAL
-write-buffer-size = 10000
+write-buffer-size = <%= @config['storage']['write-buffer-size'] %>
 
 [cluster]
 # A comma separated list of servers to seed
@@ -93,51 +95,51 @@ write-buffer-size = 10000
 # This port should be reachable between all servers in a cluster.
 # However, this port shouldn't be accessible from the internet.
 
-protobuf_port = 8099
-protobuf_timeout = "2s" # the write timeout on the protobuf conn any duration parseable by time.ParseDuration
-protobuf_heartbeat = "200ms" # the heartbeat interval between the servers. must be parseable by time.ParseDuration
-protobuf_min_backoff = "1s" # the minimum backoff after a failed heartbeat attempt
-protobuf_max_backoff = "10s" # the maxmimum backoff after a failed heartbeat attempt
+protobuf_port = <%= @config['cluster']['protobuf_port'] %>
+protobuf_timeout = "<%= @config['cluster']['protobuf_timeout'] %>" # the write timeout on the protobuf conn any duration parseable by time.ParseDuration
+protobuf_heartbeat = "<%= @config['cluster']['protobuf_heartbeat'] %>" # the heartbeat interval between the servers. must be parseable by time.ParseDuration
+protobuf_min_backoff = "<%= @config['cluster']['protobuf_min_backoff'] %>" # the minimum backoff after a failed heartbeat attempt
+protobuf_max_backoff = "<%= @config['cluster']['protobuf_max_backoff'] %>" # the maxmimum backoff after a failed heartbeat attempt
 
 # How many write requests to potentially buffer in memory per server. If the buffer gets filled then writes
 # will still be logged and once the server has caught up (or come back online) the writes
 # will be replayed from the WAL
-write-buffer-size = 10000
+write-buffer-size = <%= @config['cluster']['write-buffer-size'] %>
 
 # the maximum number of responses to buffer from remote nodes, if the
 # expected number of responses exceed this number then querying will
 # happen sequentially and the buffer size will be limited to this
 # number
-max-response-buffer-size = 100
+max-response-buffer-size = <%= @config['cluster']['max-response-buffer-size'] %>
 
 # When queries get distributed out to shards, they go in parallel. This means that results can get buffered
 # in memory since results will come in any order, but have to be processed in the correct time order.
 # Setting this higher will give better performance, but you'll need more memory. Setting this to 1 will ensure
 # that you don't need to buffer in memory, but you won't get the best performance.
-concurrent-shard-query-limit = 10
+concurrent-shard-query-limit = <%= @config['cluster']['concurrent-shard-query-limit'] %>
 
 [leveldb]
 
 # Maximum mmap open files, this will affect the virtual memory used by
 # the process
-max-open-files = 40
+max-open-files = <%= @config['leveldb']['max-open-files'] %>
 
 # LRU cache size, LRU is used by leveldb to store contents of the
 # uncompressed sstables. You can use `m` or `g` prefix for megabytes
 # and gigabytes, respectively.
-lru-cache-size = "200m"
+lru-cache-size = "<%= @config['leveldb']['lru-cache-size'] %>"
 
 # The default setting on this is 0, which means unlimited. Set this to something if you want to
 # limit the max number of open files. max-open-files is per shard so this * that will be max.
-max-open-shards = 0
+max-open-shards = <%= @config['leveldb']['max-open-shards'] %>
 
 # The default setting is 100. This option tells how many points will be fetched from LevelDb before
 # they get flushed into backend.
-point-batch-size = 100
+point-batch-size = <%= @config['leveldb']['point-batch-size'] %>
 
 # The number of points to batch in memory before writing them to leveldb. Lowering this number will
 # reduce the memory usage, but will result in slower writes.
-write-batch-size = 5000000
+write-batch-size = <%= @config['leveldb']['write-batch-size'] %>
 
 # These options specify how data is sharded across the cluster. There are two
 # shard configurations that have the same knobs: short term and long term.
@@ -150,14 +152,14 @@ write-batch-size = 5000000
 [sharding]
   # how many servers in the cluster should have a copy of each shard.
   # this will give you high availability and scalability on queries
-  replication-factor = 1
+  replication-factor = <%= @config['sharding']['replication-factor'] %>
 
   [sharding.short-term]
   # each shard will have this period of time. Note that it's best to have
   # group by time() intervals on all queries be < than this setting. If they are
   # then the aggregate is calculated locally. Otherwise, all that data gets sent
   # over the network when doing a query.
-  duration = "7d"
+  duration = "<%= @config['sharding']['short-term']['duration'] %>"
 
   # split will determine how many shards to split each duration into. For example,
   # if we created a shard for 2014-02-10 and split was set to 2. Then two shards
@@ -165,7 +167,7 @@ write-batch-size = 5000000
   # be split into those two shards deterministically by hashing the (database, serise)
   # tuple. That means that data for a given series will be written to a single shard
   # making querying efficient. That can be overridden with the next option.
-  split = 1
+  split = <%= @config['sharding']['short-term']['split'] %>
 
   # You can override the split behavior to have the data for series that match a
   # given regex be randomly distributed across the shards for a given interval.
@@ -176,20 +178,20 @@ write-batch-size = 5000000
   # split-random = "/^hf.*/"
 
   [sharding.long-term]
-  duration = "30d"
-  split = 1
+  duration = "<%= @config['sharding']['long-term']['duration'] %>"
+  split = <%= @config['sharding']['long-term']['split'] %>
   # split-random = "/^Hf.*/"
 
 [wal]
 
-dir   = "/opt/influxdb/shared/data/wal"
-flush-after = 1000 # the number of writes after which wal will be flushed, 0 for flushing on every write
-bookmark-after = 1000 # the number of writes after which a bookmark will be created
+dir   = "<%= @config['wal']['dir'] %>"
+flush-after = <%= @config['wal']['flush-after'] %> # the number of writes after which wal will be flushed, 0 for flushing on every write
+bookmark-after = <%= @config['wal']['bookmark-after'] %> # the number of writes after which a bookmark will be created
 
 # the number of writes after which an index entry is created pointing
 # to the offset of the first request, default to 1k
-index-after = 1000
+index-after = <%= @config['wal']['index-after'] %>
 
 # the number of requests per one log file, if new requests came in a
 # new log file will be created
-requests-per-logfile = 10000
+requests-per-logfile = <%= @config['wal']['requests-per-logfile'] %>
