@@ -2,7 +2,7 @@
 # Cookbook Name:: influxdb
 # Recipe:: default
 #
-# Copyright (C) 2014 Burberry, LTD
+# Copyright (C) 2014 Fraser Scott
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
