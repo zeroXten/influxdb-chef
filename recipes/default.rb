@@ -30,6 +30,7 @@ package_file = File.join(Chef::Config[:file_cache_path], node.influxdb.package.n
 
 remote_file package_file do
   source URI.join(node.influxdb.package.base_url, node.influxdb.package.name).to_s
+  action :create_if_missing
 end
 
 platform_provider = case node.platform_family
