@@ -1,10 +1,11 @@
+default.influxdb.version = 'latest'
 default.influxdb.package.base_url = 'http://s3.amazonaws.com/influxdb/'
 
 case node.platform_family
 when 'debian'
-  default.influxdb.package.name = node.kernel.machine == 'x86_64' ? 'influxdb_latest_amd64.deb' : 'influxdb_latest_i386.deb'
+  default.influxdb.package.name = node.kernel.machine == 'x86_64' ? "influxdb_#{node.influxdb.version}_amd64.deb" : "influxdb_#{node.influxdb.version}_i386.deb"
 when 'rhel'
-  default.influxdb.package.name = node.kernel.machine == 'x86_64' ? 'influxdb-latest-1.x86_64.rpm' : 'influxdb-latest-1.i686.rpm'
+  default.influxdb.package.name = node.kernel.machine == 'x86_64' ? "influxdb-#{node.influxdb.version}-1.x86_64.rpm" : "influxdb-#{node.influxdb.version}-1.i686.rpm"
 else
   Chef::Log.fatal "Not a supported platform family: #{node.platform_family}"
   raise
