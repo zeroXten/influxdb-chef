@@ -66,7 +66,7 @@ read-timeout = "<%= @config['api']['read-timeout'] %>"
 # The raft port should be open between all servers in a cluster.
 # However, this port shouldn't be accessible from the internet.
 
-port = <%= @config['raft']['enabled'] %>
+port = <%= @config['raft']['port'] %>
 
 # Where the raft logs are stored. The user running InfluxDB will need read/write access.
 dir  = "<%= @config['raft']['dir'] %>"
