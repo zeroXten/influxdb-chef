@@ -45,6 +45,14 @@ package 'influxdb' do
   provider platform_provider
 end
 
+group node.influxdb.group
+
+user node.influxdb.user do
+  supports  :manage_home => true
+  gid       node.influxdb.group
+  system    true
+end
+
 # TOML gem doesn't actually work properly, so for now we're going to have to use a
 # basic config file
 #chef_gem 'toml'
