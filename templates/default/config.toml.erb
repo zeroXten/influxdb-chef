@@ -41,9 +41,9 @@ read-timeout = "<%= @config['api']['read-timeout'] %>"
   # Configure the graphite api
   [input_plugins.graphite]
   enabled = <%= @config['input_plugins']['graphite']['enabled'] %>
-  # port = 2003
-  # database = ""  # store graphite data in this database
-  # udp_enabled = true # enable udp interface on the same port as the tcp interface
+  port = <%= @config['input_plugins']['graphite']['port'] %>
+  database = "<%= @config['input_plugins']['graphite']['database'] %>"  # store graphite data in this database
+  udp_enabled = <%= @config['input_plugins']['graphite']['udp_enabled'] %> # enable udp interface on the same port as the tcp interface
 
   # Configure the udp api
   [input_plugins.udp]

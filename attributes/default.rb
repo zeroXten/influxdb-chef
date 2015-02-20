@@ -48,7 +48,10 @@ default.influxdb.config = Mash.new ({
   },
   'input_plugins' => {
     'graphite' => {
-      'enabled' => false
+      'enabled' => false,
+      'port' => 2003,
+      'database' => 'graphite',
+      'udp_enabled' => false
     },
     'udp' => {
       'enabled' => false
