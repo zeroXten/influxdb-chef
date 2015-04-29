@@ -7,3 +7,6 @@ long_description 'Installs/Configures influxdb'
 version          '0.1.4'
 
 depends 'limits', '~> 0.2'
+
+supports 'debian'
+supports 'rhel'
